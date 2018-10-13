@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center">
   <span align="center"> <img width="80" height="70" class="center" src="https://github.com/InstantCodee/PassIt/blob/master/data/images/com.github.instantcodee.passit.png" alt="Icon"></span>
   <h1 align="center">PassIt</h1>
@@ -87,3 +88,6 @@ To help, access the links below:
 ### License
 
 This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE.md) file for details.
+=======
+# PassIt
+>>>>>>> fa8f70787b34948bf8b8d67af89b8de8336abcfc
