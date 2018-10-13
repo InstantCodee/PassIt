@@ -1,0 +1,15 @@
+Source: com.github.instantcodee.passit
+Section: x11
+Priority: extra
+Maintainer: Mondei1 <klier.nicolas@gmx.de>
+Build-Depends: meson,
+               valac,
+               debhelper,
+               libgranite-dev,
+               libgtk-3-dev
+
+Standards-Version: 3.9.3
+Package: com.github.instantcodee.passit
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Passwords simplified

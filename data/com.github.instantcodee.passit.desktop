@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=PassIt
+Comment=Passwords simplified
+Icon=com.github.instantcodee.passit
+Exec=com.github.instantcodee.passit
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;
+Keywords=app;vala;
