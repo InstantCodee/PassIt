@@ -3,10 +3,8 @@ sources += files(
     'configs/Settings.vala',
 
     'controllers/AppController.vala',
-    'controllers/CreateController.vala',
 
     'views/AppView.vala',
-    'views/CreateContainer.vala',
 
     'widgets/HeaderBar.vala',
 

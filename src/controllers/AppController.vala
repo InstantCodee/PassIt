@@ -27,10 +27,10 @@ namespace App.Controllers {
      */
     public class AppController {
 
-        private Gtk.Application            application;
-        private AppView                    app_view;
-        private Gtk.HeaderBar              headerbar;
-        private Gtk.ApplicationWindow      window { get; private set; default = null; }
+        public Gtk.Application            application;
+        public AppView                    app_view;
+        public Gtk.HeaderBar              headerbar;
+        public Gtk.ApplicationWindow      window { get; private set; default = null; }
 
         /**
          * Constructs a new {@code AppController} object.
@@ -39,18 +39,21 @@ namespace App.Controllers {
             this.application = application;
             this.window = new Window (this.application);
             this.headerbar = new HeaderBar ();
-            this.app_view = new AppView (this.application);
+            this.app_view = new AppView (this);
 
             this.window.add (this.app_view);
-            this.window.set_default_size (800, 640);
-            this.window.set_size_request (800, 640);
+            this.window.set_default_size (800, 350);
+            this.window.set_size_request (800, 350);
             this.window.set_titlebar (this.headerbar);
+            this.window.hide_titlebar_when_maximized = true;
             this.application.add_window (window);
         }
 
         public void activate () {
             window.show_all ();
             app_view.activate ();
+
+            this.app_view.box_buttons.hide ();
         }
 
         public void quit () {
