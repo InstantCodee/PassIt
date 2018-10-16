@@ -21,3 +21,4 @@
 @define-color colorAccent #399103;
 
 AppViewsAppView         {background-color: #fff;}
+.wrong_input            {border: 1px solid #c6262e; color: #c6262e;}

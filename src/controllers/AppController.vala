@@ -27,10 +27,12 @@ namespace App.Controllers {
      */
     public class AppController {
 
-        public Gtk.Application            application;
-        public AppView                    app_view;
-        public Gtk.HeaderBar              headerbar;
-        public Gtk.ApplicationWindow      window { get; private set; default = null; }
+        public Gtk.Application              application;
+        public AppView                      app_view;
+        public Gtk.HeaderBar                headerbar;
+        public Gtk.ApplicationWindow        window { get; private set; default = null; }
+
+        public string                       DATA_DIR;
 
         /**
          * Constructs a new {@code AppController} object.
@@ -39,7 +41,7 @@ namespace App.Controllers {
             this.application = application;
             this.window = new Window (this.application);
             this.headerbar = new HeaderBar ();
-            this.app_view = new AppView (this);
+            this.app_view = new AppView ();
 
             this.window.add (this.app_view);
             this.window.set_default_size (800, 350);

@@ -53,6 +53,8 @@ namespace App {
          * @return {@code void}
          */
         public override void activate () {
+            // Create applicaton data folder
+            Process.spawn_command_line_sync ("mkdir -p " + Environment.get_user_data_dir() + "/passit");
             if (controller == null) {
                 controller = new AppController (this);
             }

@@ -20,6 +20,9 @@ using App.Widgets;
 using App.Views;
 using App.Controllers;
 
+/**
+ * Code inspiration from 'Archetype' by kjlaw89. Class: https://github.com/kjlaw89/archetype/blob/master/src/views/AppView.vala
+ */
 namespace App.Views {
 
     /**
@@ -28,8 +31,6 @@ namespace App.Views {
      * @since 1.0.0
      */
     public class AppView : Gtk.Box {
-
-        private AppController controller;
 
         public Gtk.Box              box_buttons;
         public Gtk.Box              box_action_buttons;
@@ -45,6 +46,8 @@ namespace App.Views {
         private Gtk.Label           label_password_description;
         private Gtk.Label           label_enter_reminder;
         private Gtk.Label           label_reminder_description;
+        private Gtk.Label           label_headline_done;
+        private Gtk.Label           label_done;
 
         private Gtk.Image           image_password; // dialog-password
         private Gtk.Image           image_reminder; // dialog-information
@@ -59,13 +62,12 @@ namespace App.Views {
                 _stage = value;
             }
         }
+        public string DATA_DIR = (Environment.get_user_data_dir() + "/passit/");
 
         /**
          * Constructs a new {@code AppView} object.
          */
-        public AppView (AppController controller) {
-            this.controller = controller;
-
+        public AppView () {
             stack = new Gtk.Stack ();
             stack.set_transition_type (Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
             stack.set_transition_duration (200);
@@ -78,13 +80,12 @@ namespace App.Views {
             welcome_view.activated.connect ((index) => {
                 switch (index) {
                     case 0:
-                        stage = "create";
+                        next ();
                         orientation = Gtk.Orientation.VERTICAL;
                         get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
                         box_buttons.show ();
                         break;
                     case 1:
-                        stage = "import";
                         orientation = Gtk.Orientation.VERTICAL;
                         get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
                         box_buttons.show ();
@@ -97,6 +98,7 @@ namespace App.Views {
 
             // Add views to stack.
             form_create_container ();
+            form_done ();
 
             // Back button
             button_back = new Gtk.Button.with_mnemonic (_("Back"));
@@ -120,6 +122,7 @@ namespace App.Views {
             button_done.clicked.connect (() => {
                 next ();
             });
+            button_done.sensitive = false;
 
             // Action button box
             box_action_buttons = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 16);
@@ -130,6 +133,7 @@ namespace App.Views {
 
             // Button box
             box_buttons = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+            box_buttons.halign = Gtk.Align.END;
             box_buttons.margin = 15;
             box_buttons.add (box_action_buttons);
 
@@ -143,13 +147,18 @@ namespace App.Views {
             switch (stage) {
                 case "welcome":
                     stage = "create";
+                    print ("Here!");
+
+                    button_done.clicked.connect (() => {
+                        // Spawn system command
+                        print ("Spawnn: " + "echo \"" + entry_password.get_text () + "\" > " + DATA_DIR + "test.txt\n");
+                        Process.spawn_command_line_sync ("echo \"" + entry_password.get_text () + "\" > " + DATA_DIR + "test.txt");
+                    });
                     break;
                 case "create":
                     // Currently empty. Just in case we want to add new views later. Eg.: for selecting different types of authentication.
-                    stage = "welcome";
-                    break;
-                case "import":
-                    // Currently empty. Just in case we want to add new views later.
+                    stage = "done";
+                    button_done.hide ();
                     break;
             }
         }
@@ -160,12 +169,40 @@ namespace App.Views {
                     stage = "welcome";
                     box_buttons.hide ();
                     break;
+                case "done":
+                    stage = "create";
+                    button_done.show ();
+                    break;
+            }
+        }
+
+        private void can_next () {
+            button_done.sensitive = false;
+            switch (stage) {
+                case "create":
+                    if (entry_password.get_text () == "") {
+                        entry_password.get_style_context ().remove_class ("wrong_input");
+                        return;
+                    }
+                    try {
+                        Regex password_regex = new Regex ("[^a-zA-Z0-9ä-ü]");  // Regex how a password should not be. (min: 7 normal chars and 1 special char)
+                        if (!password_regex.match (entry_password.get_text ()) || entry_password.get_text ().len () < 12) {
+                            // If the password not only contains aA-zZ and 0-9
+                            entry_password.get_style_context ().add_class ("wrong_input");
+                            button_done.sensitive = false;
+                        } else {
+                            // If the password matches the minimums.
+                            entry_password.get_style_context ().remove_class ("wrong_input");
+                            button_done.sensitive = true;
+                        }
+                    } catch (RegexError e) {
+                        entry_password.get_style_context ().add_class ("wrong_input");
+                    }
+                    break;
             }
         }
 
         private void form_create_container () {
-            controller.window.set_default_size (800, 240);
-
             Gtk.Grid grid = new Gtk.Grid ();
             grid.expand = true;
             grid.column_spacing = 12;
@@ -181,15 +218,19 @@ namespace App.Views {
             label_enter_password.set_use_markup (true);
             label_enter_password.halign = Gtk.Align.START;
 
-            label_password_description = new Gtk.Label (_("You have to rememeber that password. If you lose it, you lose access to your password's.")
-                + " <a href=\"https://www.wikihow.com/Create-a-Password-You-Can-Remember\">" + _("How to password") + "</a>");
+            label_password_description = new Gtk.Label (_("You have to rememeber that password. If you lose it, you lose access to your password's. ")
+                + " <a href=\"https://www.wikihow.com/Create-a-Password-You-Can-Remember\">" + _("How to password") + "</a>.");
             label_password_description.set_use_markup (true);
             label_password_description.halign = Gtk.Align.START;
 
             entry_password = new Gtk.Entry ();
             entry_password.hexpand = true;
             entry_password.set_visibility (false);
-            entry_password.placeholder_text = _("Use a random password you never used before!");
+            entry_password.placeholder_text = _("11 normal chars and 1 special char are minimum");
+            entry_password.key_release_event.connect(() => {
+                can_next ();
+                return false;
+            });
 
             //=============
             // Reminder
@@ -206,7 +247,7 @@ namespace App.Views {
 
             entry_reminder = new Gtk.Entry ();
             entry_reminder.hexpand = true;
-            entry_reminder.placeholder_text = _("Something that is in the right drawer with the color green.");
+            entry_reminder.placeholder_text = _("Something that is in the right drawer with the green color.");
 
             // Password
             grid.attach (image_password, -1, 2, 3, 4);
@@ -224,8 +265,18 @@ namespace App.Views {
         }
 
         private void form_done () {
-            Gtk.Grid grid = new Gtk.Grid ();
-            stack.add_named (grid, "done");
+            Gtk.Box box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            box.halign = Gtk.Align.CENTER;
+            box.valign = Gtk.Align.CENTER;
+
+            label_headline_done = new Gtk.Label ("<b>" + _("Congratulation!") + "</b>");
+            label_headline_done.set_use_markup (true);
+            label_done = new Gtk.Label (_("I just created your new container."));
+
+            box.add (label_headline_done);
+            box.add (label_done);
+
+            stack.add_named (box, "done");
         }
     }
 }

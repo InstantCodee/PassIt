@@ -1,16 +1,16 @@
 /*
 * Copyright (C) 2018  Mondei1 <klier.nicolas@gmx.de>
-* 
+*
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-* 
+*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -18,13 +18,13 @@
 namespace App.Configs {
 
     /**
-     * The {@code Constants} class is responsible for defining all 
+     * The {@code Constants} class is responsible for defining all
      * the constants used in the application.
      *
      * @since 1.0.0
      */
     public class Constants {
-    
+
         public abstract const string ID = "com.github.instantcodee.passit";
         public abstract const string VERSION = "1.0.0";
         public abstract const string PROGRAME_NAME = "PassIt";
